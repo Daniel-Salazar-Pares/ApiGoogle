@@ -131,6 +131,7 @@ fun LoginScreen(mapViewModel: MapViewModel, navController: NavController, authen
         if (nextScreen) {
             authentication.changeGoToNext()
             mapViewModel.setCurrentUser()
+            mapViewModel.getMarkers()
             navController.navigate(Routes.MapScreen.route)
         }
     }

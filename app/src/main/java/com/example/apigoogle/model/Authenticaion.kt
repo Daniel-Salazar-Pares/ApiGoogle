@@ -80,18 +80,4 @@ class Authenticaion : ViewModel() {
     fun logOut() {
         auth.signOut()
     }
-
-    init {
-        autoLogin()
-    }
-
-    private fun autoLogin() {
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            _userId.value = currentUser.uid
-            _loggedUser.value = currentUser.email?.split("@")?.get(0)
-            _goToNext.value = true
-        }
-    }
-
 }
