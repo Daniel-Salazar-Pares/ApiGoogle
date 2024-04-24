@@ -109,7 +109,7 @@ fun LoginScreen(mapViewModel: MapViewModel, navController: NavController, authen
                     authentication.changeGoToNext()
                     navController.navigate(Routes.SignUpScreen.route)
                                               },
-                color = Color.Yellow
+                color = Color.Magenta
             )
         }
 
