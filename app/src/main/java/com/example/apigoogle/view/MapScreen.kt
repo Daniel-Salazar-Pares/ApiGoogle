@@ -52,8 +52,6 @@ import java.util.UUID
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MapScreen(navController: NavController, mapViewModel: MapViewModel) {
-    val markers by mapViewModel.markers.observeAsState()
-    mapViewModel.getMarkers()
     MyDrawer(
         navController = navController,
         mapViewModel = mapViewModel,
