@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "370915217336",
+    "project_id": "ultra-welder-416311",
+    "storage_bucket": "ultra-welder-416311.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:370915217336:android:b6f7e9e644d87e604d094d",
+        "android_client_info": {
+          "package_name": "com.example.apigoogle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "370915217336-amh1jlv7a78l9hv31ngp00slv5nf30sq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.apigoogle",
+            "certificate_hash": "c64d0b4de9e05b938a3194975025eaccf8fcf6cc"
+          }
+        },
+        {
+          "client_id": "370915217336-jnh7i52h568b55h6lt5glg266ur0voa3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQJbcO60_8W3Y9JJbs9qcIZMMy4peRIfs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "370915217336-jnh7i52h568b55h6lt5glg266ur0voa3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
