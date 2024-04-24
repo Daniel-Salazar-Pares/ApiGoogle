@@ -35,10 +35,10 @@ class MainActivity : ComponentActivity() {
                         startDestination = Routes.LaunchScreen.route
                     ){
                         composable(Routes.MapScreen.route){
-                            MapScreen(navigationController, mapViewModel)
+                            MapScreen(navigationController, mapViewModel, authentication)
                         }
                         composable(Routes.ListScreen.route){
-                            ListScreen(mapViewModel, navigationController)
+                            ListScreen(mapViewModel, navigationController, authentication)
                         }
                         composable(Routes.MarkerScreen.route) { backStackEntry ->
                             val markerId = backStackEntry.arguments!!.getString("markerId")
@@ -62,9 +62,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-
-
-//map no genera bien
-//list no generada bien
-//no elimina bien

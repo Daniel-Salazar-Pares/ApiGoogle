@@ -26,6 +26,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
@@ -33,10 +34,14 @@ import androidx.navigation.NavController
 import com.example.apigoogle.viewmodel.MapViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.apigoogle.model.Authentication
+import com.example.apigoogle.model.UserPrefs
 import com.example.apigoogle.navigation.Routes
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 //Scaffold function
@@ -75,12 +80,15 @@ fun MyTopAppBar(mapViewModel: MapViewModel, state: DrawerState) {
 
 //DrawerMenu
 @Composable
-fun MyDrawer(mapViewModel: MapViewModel, navController: NavController, content: @Composable () -> Unit) {
+fun MyDrawer(mapViewModel: MapViewModel, navController: NavController, content: @Composable () -> Unit, authentication: Authentication) {
     val scope = rememberCoroutineScope()
     val currentRoute = navController.currentDestination?.route
     val drawerName = getScreenNameFromRoute(currentRoute ?: "")
     mapViewModel.setScreen(drawerName)
     val state = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val context = LocalContext.current
+    val userPrefs = UserPrefs(context)
+    val storedUserData = userPrefs.getUserData.collectAsState(initial = emptyList())
 
     //Changes TopAppBar title to screenName
     DisposableEffect(navController) {
@@ -149,8 +157,19 @@ fun MyDrawer(mapViewModel: MapViewModel, navController: NavController, content: 
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .clickable {
-                                navController.navigate(Routes.LoginScreen.route)
-                                Authentication().logOut()
+                                if (storedUserData.value.isNotEmpty() && storedUserData.value[0] != "" && storedUserData.value[1] != "") {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        userPrefs.deleteUserData()
+                                    }
+                                    Authentication().logOut()
+                                    authentication.changeGoToNext()
+                                    navController.navigate(Routes.LoginScreen.route)
+                                } else {
+                                    Authentication().logOut()
+                                    authentication.changeGoToNext()
+                                    navController.navigate(Routes.LoginScreen.route)
+                                }
+
                             }
                             .padding(8.dp)
                     )

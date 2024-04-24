@@ -20,6 +20,8 @@ class MapViewModel: ViewModel() {
     fun setScreen(screenName: String) {
         screen.value = screenName
     }
+    val _isAuthenticated = MutableLiveData<Boolean>(false)
+    val isAuthenticated: LiveData<Boolean> = _isAuthenticated
 
     val icons = listOf(
         "baseline_park_24",
@@ -29,14 +31,20 @@ class MapViewModel: ViewModel() {
     )
 
     //Functions and variables related to the Authentication
-    private var _currentUser = MutableLiveData<String>()
+    private var _currentUser = MutableLiveData<String?>()
     private val currentUser = _currentUser
+
     fun getCurrentUser(): String? {
         return currentUser.value
     }
 
     fun setCurrentUser() {
-        _currentUser.value = Authentication().getUID()!!
+        val uid = Authentication().getUID()
+        if (uid != null) {
+            _currentUser.value = uid
+        } else {
+            Log.e("Error", "User not authenticated____________________________________")
+        }
     }
 
     //Functions and variables related to the DataBase

@@ -13,11 +13,13 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -34,8 +37,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.apigoogle.model.Authentication
+import com.example.apigoogle.model.UserPrefs
 import com.example.apigoogle.navigation.Routes
 import com.example.apigoogle.viewmodel.MapViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(mapViewModel: MapViewModel, navController: NavController, authentication: Authentication) {
@@ -48,11 +55,18 @@ fun LoginScreen(mapViewModel: MapViewModel, navController: NavController, authen
 
         Spacer(modifier = Modifier.padding(8.dp))
 
-        val username = remember { mutableStateOf("qwerty@gmail.com") }
-        val password = remember { mutableStateOf("qwerty") }
+        val username = remember { mutableStateOf("") }
+        val password = remember { mutableStateOf("") }
         val nextScreen:Boolean by authentication.goToNext.observeAsState(false)
         val loginError:Boolean by authentication.loginError.observeAsState(false)
+        val stayLoggedIn = remember { mutableStateOf(false) }
+        val context = LocalContext.current
+        val userPrefs = UserPrefs(context)
+        val storedUserData = userPrefs.getUserData.collectAsState(initial = emptyList())
 
+        if (storedUserData.value.isNotEmpty() && storedUserData.value[0] != "" && storedUserData.value[1] != "") {
+            authentication.login(storedUserData.value[0], storedUserData.value[1])
+        }
         TextField(
             value = username.value,
             onValueChange = { username.value = it },
@@ -85,14 +99,35 @@ fun LoginScreen(mapViewModel: MapViewModel, navController: NavController, authen
         }
         Spacer(modifier = Modifier.padding(8.dp))
         Button(onClick = {
-            authentication.login(username.value, password.value)
+            if (stayLoggedIn.value == true) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    userPrefs.saveUserData(username.value, password.value)
+                    authentication.login(username.value, password.value)
+                }
+            } else {
+                authentication.login(username.value, password.value)
+            }
+
         }, modifier = Modifier.fillMaxWidth(0.80f),
             enabled = username.value.isNotEmpty() && password.value.isNotEmpty(),
             shape = RectangleShape
         ) {
             Text("Login")
         }
+        Spacer(modifier = Modifier.padding(8.dp))
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
 
+        ) {
+            Text(text = "Stay logged in", fontSize = 18.sp)
+            Spacer(modifier = Modifier.padding(4.dp))
+            Checkbox(
+                checked = stayLoggedIn.value,
+                onCheckedChange = { stayLoggedIn.value = it }
+            )
+        }
 
         Row {
             Text("Don't have an account?", fontSize = 14.sp)

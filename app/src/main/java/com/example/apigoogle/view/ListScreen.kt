@@ -34,13 +34,14 @@ import com.example.apigoogle.viewmodel.MapViewModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import androidx.navigation.NavController
+import com.example.apigoogle.model.Authentication
 import com.example.apigoogle.navigation.Routes
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 
 @Composable
-fun ListScreen(mapViewModel: MapViewModel, navController: NavController) {
+fun ListScreen(mapViewModel: MapViewModel, navController: NavController, authentication: Authentication) {
     val markerList by mapViewModel.markers.observeAsState()
     MyDrawer(
         navController = navController,
@@ -112,6 +113,7 @@ fun ListScreen(mapViewModel: MapViewModel, navController: NavController) {
                     }
                 }
             }
-        }
+        },
+        authentication = authentication
     )
 }

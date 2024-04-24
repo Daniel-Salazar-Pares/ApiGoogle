@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.apigoogle.MainActivity
+import com.example.apigoogle.model.Authentication
 import com.example.apigoogle.viewmodel.MapViewModel
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -53,7 +52,7 @@ import java.util.UUID
 @SuppressLint("MissingPermission")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun MapScreen(navController: NavController, mapViewModel: MapViewModel) {
+fun MapScreen(navController: NavController, mapViewModel: MapViewModel, authentication: Authentication) {
     MyDrawer(
         navController = navController,
         mapViewModel = mapViewModel,
@@ -94,7 +93,8 @@ fun MapScreen(navController: NavController, mapViewModel: MapViewModel) {
                     Text("Permission denied, need permission to access location.")
                 }
             }
-        }
+        },
+        authentication = authentication
     )
 }
 
@@ -181,13 +181,13 @@ fun Map(
                     Button(
                         enabled = nom.isNotEmpty() && descripcio.isNotEmpty(),
                         onClick = {
-                        mapViewModel.addMarker(id, nom, descripcio, ubi.value, selectedIcon)
-                        nom = ""
-                        descripcio = ""
-                        selectedIcon = "baseline_park_24"
-                        mapViewModel.getMarkers()
-                        showBottomSheet.value = false
-                    }) {
+                            mapViewModel.addMarker(id, nom, descripcio, ubi.value, selectedIcon)
+                            nom = ""
+                            descripcio = ""
+                            selectedIcon = "baseline_park_24"
+                            mapViewModel.getMarkers()
+                            showBottomSheet.value = false
+                        }) {
                         Text("Add marker")
                     }
                 }
