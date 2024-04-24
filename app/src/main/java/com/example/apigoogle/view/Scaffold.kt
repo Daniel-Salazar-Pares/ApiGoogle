@@ -35,12 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.example.apigoogle.model.Authenticaion
+import com.example.apigoogle.model.Authentication
 import com.example.apigoogle.navigation.Routes
 import kotlinx.coroutines.launch
 
+//Scaffold function
 @Composable
-fun MyScaffold(mapViewModel: MapViewModel, state: DrawerState, navController: NavController ,content: @Composable () -> Unit) {
+fun MyScaffold(mapViewModel: MapViewModel, state: DrawerState, navController: NavController, content: @Composable () -> Unit) {
     Scaffold (
         topBar = {
             MyTopAppBar(mapViewModel, state)
@@ -53,6 +54,7 @@ fun MyScaffold(mapViewModel: MapViewModel, state: DrawerState, navController: Na
     )
 }
 
+//TopAppBar function
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTopAppBar(mapViewModel: MapViewModel, state: DrawerState) {
@@ -71,7 +73,7 @@ fun MyTopAppBar(mapViewModel: MapViewModel, state: DrawerState) {
     )
 }
 
-
+//DrawerMenu
 @Composable
 fun MyDrawer(mapViewModel: MapViewModel, navController: NavController, content: @Composable () -> Unit) {
     val scope = rememberCoroutineScope()
@@ -80,7 +82,7 @@ fun MyDrawer(mapViewModel: MapViewModel, navController: NavController, content: 
     mapViewModel.setScreen(drawerName)
     val state = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    //ni idea como funciona pero cambia el titulo del appbar
+    //Changes TopAppBar title to screenName
     DisposableEffect(navController) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             val route = destination.route ?: return@OnDestinationChangedListener
@@ -137,30 +139,6 @@ fun MyDrawer(mapViewModel: MapViewModel, navController: NavController, content: 
                     }
                 )
                 Divider()
-                NavigationDrawerItem(
-                    label = { Text("New Markers") },
-                    icon = { Icon(imageVector = Icons.Outlined.Add, contentDescription = "Search") },
-                    selected = false,
-                    onClick = {
-                        scope.launch {
-                            state.close()
-                            navController.navigate(Routes.MarkerScreen.route) // Replace with the route for "New Markers"
-                        }
-                    }
-                )
-                Divider()
-                NavigationDrawerItem(
-                    label = { Text("Camera") },
-                    icon = { Icon(imageVector = Icons.Outlined.AddAPhoto, contentDescription = "Camera") },
-                    selected = false,
-                    onClick = {
-                        scope.launch {
-                            state.close()
-                            navController.navigate(Routes.CameraScreen.route) // Replace with the route for "New Markers"
-                        }
-                    }
-                )
-                Divider()
                 Column (modifier = Modifier
                     .fillMaxSize()
                     .padding(8.dp), verticalArrangement = Arrangement.Bottom, horizontalAlignment = Alignment.End) {
@@ -172,7 +150,7 @@ fun MyDrawer(mapViewModel: MapViewModel, navController: NavController, content: 
                         modifier = Modifier
                             .clickable {
                                 navController.navigate(Routes.LoginScreen.route)
-                                Authenticaion().logOut()
+                                Authentication().logOut()
                             }
                             .padding(8.dp)
                     )
@@ -184,13 +162,12 @@ fun MyDrawer(mapViewModel: MapViewModel, navController: NavController, content: 
     }
 }
 
-
+//Gets the screenName depending of the screen or gives Unknown
 fun getScreenNameFromRoute(route: String): String {
     return when (route) {
         Routes.MapScreen.route -> "Map"
         Routes.ListScreen.route -> "Markers"
         Routes.MarkerScreen.route -> "New Markers"
-        Routes.CameraScreen.route -> "Camera"
         else -> "Unknown"
     }
 }

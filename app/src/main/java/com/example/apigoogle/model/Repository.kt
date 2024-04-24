@@ -23,19 +23,32 @@ class Repository : ViewModel() {
     }
 
     fun editMarker(editedMarker: Marcador) {
-        dataBase.collection("markers").document(editedMarker.id).set(
-            hashMapOf(
-                "owner" to editedMarker.owner,
-                "id" to editedMarker.id,
-                "nom" to editedMarker.nom,
-                "descripcio" to editedMarker.descripcio,
-                "latitut" to editedMarker.latitut,
-                "longitud" to editedMarker.longitud,
-                "tipus" to editedMarker.tipus
-            )
-        )
-
+        // Querying the database for documents where 'nom' equals the specified marker name
+        dataBase.collection("markers")
+            .whereEqualTo("id", editedMarker.id)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    // Updating each document that matches the query
+                    dataBase.collection("markers").document(document.id).update(
+                        mapOf(
+                            "owner" to editedMarker.owner,
+                            "id" to editedMarker.id,
+                            "nom" to editedMarker.nom,
+                            "descripcio" to editedMarker.descripcio,
+                            "latitut" to editedMarker.latitut,
+                            "longitud" to editedMarker.longitud,
+                            "tipus" to editedMarker.tipus
+                        )
+                    )
+                }
+            }
+            .addOnFailureListener { e ->
+                // Handle the case where the fetch fails
+                Log.w("DatabaseError", "Error updating document", e)
+            }
     }
+
 
     fun deleteMarker(marker: Marcador) {
         dataBase.collection("markers").whereEqualTo("id", marker.id)

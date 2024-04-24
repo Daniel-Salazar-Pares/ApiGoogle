@@ -7,6 +7,6 @@ data class Marcador(
     var latitut: Double,
     var longitud:Double,
     var tipus: String,
-    val owner:String = Authenticaion().getUID()!!) {
+    val owner:String = Authentication().getUID()!!) {
     constructor():this("","", "", 0.0, 0.0, "baseline_park_24")
 }

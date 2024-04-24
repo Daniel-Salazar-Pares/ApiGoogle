@@ -1,6 +1,7 @@
 package com.example.apigoogle
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.apigoogle.model.Authenticaion
+import com.example.apigoogle.model.Authentication
 import com.example.apigoogle.navigation.Routes
 import com.example.apigoogle.ui.theme.ApiGoogleTheme
 import com.example.apigoogle.view.*
@@ -28,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navigationController = rememberNavController()
                     val mapViewModel = MapViewModel()
-                    val authentication = Authenticaion()
+                    val authentication = Authentication()
                     NavHost (
                         navController = navigationController,
                         startDestination = Routes.LaunchScreen.route
@@ -39,20 +40,17 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.ListScreen.route){
                             ListScreen(mapViewModel, navigationController)
                         }
-                        composable(Routes.MarkerScreen.route){
-                            MarkerScreen(mapViewModel, navigationController)
+                        composable(Routes.MarkerScreen.route) { backStackEntry ->
+                            val markerId = backStackEntry.arguments!!.getString("markerId")
+                            if (markerId != null) {
+                                MarkerScreen(mapViewModel, navigationController, authentication, markerId)
+                            }
                         }
                         composable(Routes.LoginScreen.route) {
                             LoginScreen(mapViewModel, navigationController, authentication)
                         }
                         composable(Routes.SignUpScreen.route) {
                             SignUpScreen(mapViewModel, navigationController, authentication)
-                        }
-                        composable(Routes.TakePhotoScreen.route) {
-                            TakePhotoScreen(mapViewModel, navigationController)
-                        }
-                        composable(Routes.CameraScreen.route) {
-                            CameraScreen(mapViewModel, navigationController)
                         }
                         composable(Routes.LaunchScreen.route) {
                             LaunchScreen(navigationController)

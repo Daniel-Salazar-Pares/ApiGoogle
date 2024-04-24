@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 
-class Authenticaion : ViewModel() {
+class Authentication : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
 
     private var _goToNext = MutableLiveData<Boolean>(false)

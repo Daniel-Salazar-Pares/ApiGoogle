@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.apigoogle.model.Authenticaion
+import com.example.apigoogle.model.Authentication
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -38,7 +38,7 @@ import com.example.apigoogle.viewmodel.MapViewModel
 fun SignUpScreen(
     mapViewModel: MapViewModel,
     navController: NavController,
-    authentication: Authenticaion
+    authentication: Authentication
 ) {
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
@@ -121,8 +121,7 @@ fun SignUpScreen(
         Button(
             onClick = {
                 authentication.register(username.value, password.value)
-
-                      },
+            },
             modifier = Modifier.fillMaxWidth(0.80f),
             enabled = username.value.isNotEmpty() && password.value.isNotEmpty() && passwordR.value.isNotEmpty() && password.value == passwordR.value
         ) {

@@ -28,7 +28,7 @@ fun LaunchScreen(navController: NavController) {
     var startAnimation by remember { mutableStateOf(false) }
     val alphaAnim = animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
-        animationSpec = tween(durationMillis = 2000)
+        animationSpec = tween(durationMillis = 2000), label = ""
     )
     LaunchedEffect(key1 = true) {
         startAnimation = true

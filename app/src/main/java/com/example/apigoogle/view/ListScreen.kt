@@ -26,21 +26,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.apigoogle.model.Marcador
 import com.example.apigoogle.viewmodel.MapViewModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import androidx.navigation.NavController
+import com.example.apigoogle.navigation.Routes
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 
 @Composable
 fun ListScreen(mapViewModel: MapViewModel, navController: NavController) {
-
-    val markers by mapViewModel.markers.observeAsState()
-
+    val markerList by mapViewModel.markers.observeAsState()
     MyDrawer(
         navController = navController,
         mapViewModel = mapViewModel,
@@ -50,34 +51,48 @@ fun ListScreen(mapViewModel: MapViewModel, navController: NavController) {
                     .fillMaxSize()
                     .padding(16.dp),
             ) {
-                LazyColumn {
-                    if (markers!!.isEmpty()) {
-                        item {
-                            Text("No markers")
-                        }
-                    } else {
-                        items(markers!!) { marker ->
+                if (markerList!!.isEmpty()) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            text = "No markers stored yet!"
+                        )
+                    }
+                } else {
+                    LazyColumn {
+                        items(markerList!!) { marker ->
                             Card {
+                                val vectorName = marker.tipus // replace with your vector name
+                                val context = LocalContext.current
+                                val vectorId = context.resources.getIdentifier(
+                                    vectorName,
+                                    "drawable",
+                                    context.packageName
+                                )
+                                val vectorResource = painterResource(id = vectorId)
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterHorizontally)
+                                        .clickable {
+                                            navController.navigate(Routes.MarkerScreen.route.replace("{markerId}", marker.id))
+                                        }
                                 ) {
-                                    Column {
-                                        val vectorName = marker.tipus // replace with your vector name
-                                        val context = LocalContext.current
-                                        val vectorId = context.resources.getIdentifier(vectorName, "drawable", context.packageName)
-                                        val vectorResource = painterResource(id = vectorId)
-
-                                        Icon(
-                                            painter = vectorResource,
-                                            contentDescription = "Icon",
-                                            modifier = Modifier.padding(8.dp)
-                                        )
-                                    }
+                                    Icon(
+                                        painter = vectorResource,
+                                        contentDescription = "Icon",
+                                        modifier = Modifier.padding(8.dp)
+                                    )
                                     Column(
                                         modifier = Modifier.fillMaxWidth(0.9f)
                                     ) {
                                         Text(text = "Name: ${marker.nom}")
-                                        Text(text = "Descripció: ${marker.descripcio}")
+                                        Text(text = "Description: ${marker.descripcio}")
                                         Text(text = "Latitude: ${marker.latitut}")
                                         Text(text = "Longitude: ${marker.longitud}")
                                     }
@@ -91,60 +106,12 @@ fun ListScreen(mapViewModel: MapViewModel, navController: NavController) {
                                             })
                                     )
                                 }
-                                Spacer(modifier = Modifier.height(8.dp))
                             }
-                           // MarkerItem(marker, mapViewModel)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
                 }
             }
-
         }
     )
 }
-
-
-@Composable
-fun MarkerItem(marker: Marcador, mapViewModel: MapViewModel) {
-    Card {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column {
-                val vectorName = marker.tipus // replace with your vector name
-                val context = LocalContext.current
-                val vectorId = context.resources.getIdentifier(vectorName, "drawable", context.packageName)
-                val vectorResource = painterResource(id = vectorId)
-
-                Icon(
-                    painter = vectorResource,
-                    contentDescription = "Icon",
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-            Column(
-                modifier = Modifier.fillMaxWidth(0.9f)
-            ) {
-                Text(text = "Name: ${marker.nom}")
-                Text(text = "Descripció: ${marker.descripcio}")
-                Text(text = "Latitude: ${marker.latitut}")
-                Text(text = "Longitude: ${marker.longitud}")
-            }
-            Icon(
-                imageVector = Icons.Filled.Clear,
-                contentDescription = "Delete",
-                modifier = Modifier
-                    .padding(8.dp)
-                    .clickable(onClick = {
-                        mapViewModel.deleteMarker(marker)
-                        mapViewModel.getMarkers()
-                    })
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-    }
-}
-
-
-
